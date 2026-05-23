@@ -1,3 +1,3 @@
 <?php
 
-$connection = mysqli_connect("localhost", "root", "", "smartِclinic");
+$connection = mysqli_connect("localhost", "root", "", "smart_clinic");

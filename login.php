@@ -11,35 +11,52 @@ $message = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email    = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
-
-    if (empty($email) || empty($password)) {
-        $message = "<div class='alert alert-danger'>برجاء إدخال الإيميل وكلمة المرور!</div>";
-    } else {
-        // بنسأل الداتا بيز: هل في يوزر بالإيميل والباسورد دول؟
-        $query = "SELECT * FROM `users` WHERE email='$email' AND password='$password'";
-        $result = mysqli_query($connection, $query);
-
-        // لو لقينا اليوزر
-        if (mysqli_num_rows($result) > 0) {
-            $user = mysqli_fetch_assoc($result);
-
-            // 3. بنخزن بياناته في الـ Sessions عشان الموقع كله يفضل فاكره
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['full_name'];
-            $_SESSION['role'] = $user['role'];
-
-            // 4. توجيه اليوزر (Redirect) حسب هو مريض ولا مدير
-            if ($user['role'] == 'admin') {
-                header("Location: admin/index.php"); // لو مدير، يروح لوحة التحكم
-            } else {
-                header("Location: index.php"); // لو مريض، يروح الصفحة الرئيسية يحجز
-            }
-            exit(); // بنوقف السكريبت هنا عشان التوجيه يشتغل صح
+// ==========================================
+        // START: Validation & Security Block
+        // ==========================================
+        if (empty($email) || empty($password)) {
+            // التحقق من أن الحقول ليست فارغة
+            // English: Check if the input fields are empty
+            $message = "<div class='alert alert-danger'>⚠️ Please enter both email and password!</div>";
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            //  التحقق من صيغة البريد الإلكتروني
+            // English: Validate email format
+            $message = "<div class='alert alert-danger'>⚠️ Invalid email format!</div>";
         } else {
-            // لو الإيميل أو الباسورد غلط
-            $message = "<div class='alert alert-danger'>البيانات غير صحيحة، تأكد من الإيميل وكلمة المرور!</div>";
+            //  تنظيف المدخلات لحماية قاعدة البيانات من الـ SQL Injection
+            //  Clean inputs to protect the database from SQL Injection
+            $email    = mysqli_real_escape_string($connection, trim($email));
+            $password = mysqli_real_escape_string($connection, trim($password));
+
+            // بالعربي: الاستعلام عن المستخدم بصلاحياته
+            //  Query the database for the user with their role
+            $query = "SELECT * FROM `users` WHERE email='$email' AND password='$password'";
+            $result = mysqli_query($connection, $query);
+
+            if ($result && mysqli_num_rows($result) > 0) {
+                $user = mysqli_fetch_assoc($result);
+
+                //  حفظ بيانات المستخدم في السيرفر (Session)
+                //  Store user data in the Session
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['full_name'];
+                $_SESSION['role'] = $user['role'];
+
+                //  التوجيه التلقائي حسب الصلاحية لصفحة الأدمن أو الصفحة الرئيسية
+                //  Redirect based on user role (Admin or Patient)
+                if ($user['role'] == 'admin') {
+                    header("Location: admin/index.php"); 
+                } else {
+                    header("Location: index.php"); 
+                }
+                exit(); 
+            } else {
+                //  رسالة خطأ بالإنجليزية إذا كانت البيانات غير صحيحة
+                //  English error message for incorrect credentials
+                $message = "<div class='alert alert-danger'> Incorrect email or password. Please try again!</div>";
+            }
         }
-    }
+        
 }
 
 // استدعاء الهيدر

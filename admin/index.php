@@ -36,20 +36,20 @@ $appointments_result = mysqli_query($connection, $query);
 ?>
 
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard - Clinic System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>لوحة تحكم المسؤول - نظام العيادة</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="#">👨‍💻 Clinic Dashboard</a>
+        <a class="navbar-brand fw-bold" href="#">👨‍💻 لوحة تحكم العيادة</a>
         <div class="d-flex align-items-center">
-            <span class="text-white me-3">Welcome, <?= htmlspecialchars($_SESSION['user_name']); ?></span>
-            <a href="../logout.php" class="btn btn-danger btn-sm">Logout</a>
+            <span class="text-white me-3">مرحباً بك، <?= htmlspecialchars($_SESSION['user_name']); ?></span>
+            <a href="../logout.php" class="btn btn-danger btn-sm">تسجيل الخروج</a>
         </div>
     </div>
 </nav>
@@ -59,7 +59,7 @@ $appointments_result = mysqli_query($connection, $query);
         <div class="col-md-4 mb-3">
             <div class="card bg-primary text-white border-0 shadow-sm">
                 <div class="card-body p-4">
-                    <h3>👨‍⚕️ Doctors Count</h3>
+                    <h3>👨‍⚕️ عدد الأطباء</h3>
                     <h2 class="display-5 fw-bold"><?= $count_docs; ?></h2>
                 </div>
             </div>
@@ -67,7 +67,7 @@ $appointments_result = mysqli_query($connection, $query);
         <div class="col-md-4 mb-3">
             <div class="card bg-success text-white border-0 shadow-sm">
                 <div class="card-body p-4">
-                    <h3>👥 Registered Patients</h3>
+                    <h3>👥 المرضى المسجلين</h3>
                     <h2 class="display-5 fw-bold"><?= $count_patients; ?></h2>
                 </div>
             </div>
@@ -75,7 +75,7 @@ $appointments_result = mysqli_query($connection, $query);
         <div class="col-md-4 mb-3">
             <div class="card bg-warning text-dark border-0 shadow-sm">
                 <div class="card-body p-4">
-                    <h3>📅 Total Appointments</h3>
+                    <h3>📅 إجمالي المواعيد</h3>
                     <h2 class="display-5 fw-bold"><?= $count_appoin; ?></h2>
                 </div>
             </div>
@@ -83,8 +83,8 @@ $appointments_result = mysqli_query($connection, $query);
     </div>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold text-secondary">🗂️ Manage Appointments Logs</h3>
-        <a href="addDoctor.php" class="btn btn-primary btn-lg shadow-sm">➕ Add New Doctor</a>
+        <h3 class="fw-bold text-secondary">🗂️ إدارة سجلات المواعيد والحجوزات</h3>
+        <a href="addDoctor.php" class="btn btn-primary btn-lg shadow-sm">➕ إضافة طبيب جديد</a>
     </div>
 
     <div class="card shadow border-0 mb-5">
@@ -93,12 +93,12 @@ $appointments_result = mysqli_query($connection, $query);
                 <table class="table table-hover align-middle mb-0 text-center">
                     <thead class="table-dark">
                         <tr>
-                            <th>ID</th>
-                            <th>Patient Name</th>
-                            <th>Doctor Name</th>
-                            <th>Appointment Date</th>
-                            <th>Appointment Time</th>
-                            <th>Status</th>
+                            <th>رقم الحجز</th>
+                            <th>اسم المريض</th>
+                            <th>اسم الطبيب</th>
+                            <th>تاريخ الموعد</th>
+                            <th>وقت الموعد</th>
+                            <th>حالة الحجز</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -107,21 +107,21 @@ $appointments_result = mysqli_query($connection, $query);
                                 <tr>
                                     <td><strong>#<?= $row['id']; ?></strong></td>
                                     <td><?= htmlspecialchars($row['patient_name']); ?></td>
-                                    <td>Dr. <?= htmlspecialchars($row['doctor_name']); ?></td>
+                                    <td>د. <?= htmlspecialchars($row['doctor_name']); ?></td>
                                     <td><?= $row['appointment_date']; ?></td>
                                     <td><?= $row['appointment_time']; ?></td>
                                     <td>
                                         <?php if ($row['status'] == 'pending'): ?>
-                                            <span class="badge bg-warning text-dark px-3 py-2 fs-6">Pending</span>
+                                            <span class="badge bg-warning text-dark px-3 py-2 fs-6">قيد الانتظار</span>
                                         <?php else: ?>
-                                            <span class="badge bg-success px-3 py-2 fs-6">Confirmed</span>
+                                            <span class="badge bg-success px-3 py-2 fs-6">مؤكد</span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
                             <?php endwhile; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="6" class="p-4 text-muted">No records found inside the clinic system database.</td>
+                                <td colspan="6" class="p-4 text-muted">لا توجد أي سجلات حجوزات حالية داخل قاعدة بيانات نظام العيادة.</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
@@ -134,9 +134,3 @@ $appointments_result = mysqli_query($connection, $query);
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
-
-
-
-

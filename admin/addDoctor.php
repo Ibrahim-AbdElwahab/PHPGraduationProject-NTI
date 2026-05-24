@@ -1,5 +1,7 @@
 <?php
-
+// ==========================================
+// START: Session & Access Control Block
+// ==========================================
 session_start();
 
 // بالعربي: حماية الصفحة من أي دخول غير مصرح به
@@ -20,7 +22,7 @@ $message = '';
 // بالعربي: معالجة البيانات المرسلة عند الضغط على زر الحفظ
 // English: Process form submission when clicking save button
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // بالعربي: تنظيف تخرجات الفورم لحماية الداتا بيز من الـ SQL Injection
+    // بالعربي: تنظيف مخرجات الفورم لحماية الداتا بيز من الـ SQL Injection
     // English: Sanitize form data inputs to prevent SQL Injection vulnerabilities
     $doctor_name      = mysqli_real_escape_string($connection, trim($_POST['doctor_name']));
     $specialty        = mysqli_real_escape_string($connection, trim($_POST['specialty']));
@@ -29,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // صورة افتراضية للطبيب الجديد لعدم كسر تصميم الكروت في الإندكس الرئيسي
     $image_url        = 'https://cdn-icons-png.flaticon.com/512/3774/3774299.png'; 
 
-    // بالعربي: التحقق من الحقول المطلوبة (Validation)
-    // English: Data fields validation check
+    // بالعربي: التحقق من الحقول المطلوبة (Validation) والرسائل بالإنجليزية تماماً كما طلبت
+    // English: Data fields validation check with strict English messages
     if (empty($doctor_name) || empty($specialty) || empty($consultation_fee)) {
         $message = "<div class='alert alert-danger'>⚠️ All fields are mandatory! Please fill them up.</div>";
     } else {
@@ -49,11 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Add New Doctor - System Panel</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>إضافة طبيب جديد - لوحة التحكم</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
@@ -61,27 +63,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="fw-bold text-dark">➕ Add New Doctor Profile</h3>
-                <a href="index.php" class="btn btn-secondary">Back to Admin Panel</a>
+                <h3 class="fw-bold text-dark">➕ إضافة ملف طبيب جديد</h3>
+                <a href="index.php" class="btn btn-secondary">العودة للوحة التحكم</a>
             </div>
             
             <div class="card shadow border-0">
                 <div class="card-body p-4">
                     <?= $message; ?>
-                  <form method="POST" action="addDoctor.php">
+                    
+                    <form method="POST" action="addDoctor.php">
                         <div class="mb-3">
-                            <label class="form-label">Doctor Full Name</label>
-                            <input type="text" name="doctor_name" class="form-control" placeholder="e.g., Dr. John Doe" required>
+                            <label class="form-label">الاسم بالكامل للطبيب</label>
+                            <input type="text" name="doctor_name" class="form-control" placeholder="مثال: د. أحمد محمد" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Medical Specialty</label>
-                            <input type="text" name="specialty" class="form-control" placeholder="e.g., Dentistry, Cardiology" required>
+                            <label class="form-label">التخصص الطبي</label>
+                            <input type="text" name="specialty" class="form-control" placeholder="مثال: طب الأسنان، أمراض القلب" required>
                         </div>
                         <div class="mb-4">
-                            <label class="form-label">Consultation Fee (EGP)</label>
-                            <input type="number" name="consultation_fee" class="form-control" min="0" placeholder="e.g., 300" required>
+                            <label class="form-label">سعر الكشف (بالجنيه المصري)</label>
+                            <input type="number" name="consultation_fee" class="form-control" min="0" placeholder="مثال: 300" required>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 fs-5 shadow-sm">Save Doctor Profile</button>
+                        <button type="submit" class="btn btn-primary w-100 fs-5 shadow-sm">حفظ بيانات الطبيب</button>
                     </form>
                 </div>
             </div>

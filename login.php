@@ -1,5 +1,4 @@
 <?php
-// 1. لازم نبدأ الـ Session في أول سطر خالص عشان نقدر نحفظ بيانات اليوزر لما يدخل
 session_start();
 
 require 'includes/dbConnection.php';
@@ -11,52 +10,42 @@ $message = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email    = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
-// ==========================================
-        // START: Validation & Security Block
-        // ==========================================
-        if (empty($email) || empty($password)) {
-            // التحقق من أن الحقول ليست فارغة
-            // English: Check if the input fields are empty
-            $message = "<div class='alert alert-danger'>⚠️ Please enter both email and password!</div>";
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            //  التحقق من صيغة البريد الإلكتروني
-            // English: Validate email format
-            $message = "<div class='alert alert-danger'>⚠️ Invalid email format!</div>";
-        } else {
-            //  تنظيف المدخلات لحماية قاعدة البيانات من الـ SQL Injection
-            //  Clean inputs to protect the database from SQL Injection
-            $email    = mysqli_real_escape_string($connection, trim($email));
-            $password = mysqli_real_escape_string($connection, trim($password));
+    // START Validation & Security Block
+    if (empty($email) || empty($password)) {
+        //Check if the input fields are empty
+        $message = "<div class='alert alert-danger'>⚠️ Please enter both email and password!</div>";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        //Validate email format
+        $message = "<div class='alert alert-danger'>⚠️ Invalid email format!</div>";
+    } else {
+        //  Clean inputs to protect the database from SQL Injection
+        $email    = mysqli_real_escape_string($connection, trim($email));
+        $password = mysqli_real_escape_string($connection, trim($password));
 
-            // بالعربي: الاستعلام عن المستخدم بصلاحياته
-            //  Query the database for the user with their role
-            $query = "SELECT * FROM `users` WHERE email='$email' AND password='$password'";
-            $result = mysqli_query($connection, $query);
+        //  Query the database for the user with their role
+        $query = "SELECT * FROM `users` WHERE email='$email' AND password='$password'";
+        $result = mysqli_query($connection, $query);
 
-            if ($result && mysqli_num_rows($result) > 0) {
-                $user = mysqli_fetch_assoc($result);
+        if ($result && mysqli_num_rows($result) > 0) {
+            $user = mysqli_fetch_assoc($result);
 
-                //  حفظ بيانات المستخدم في السيرفر (Session)
-                //  Store user data in the Session
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['user_name'] = $user['full_name'];
-                $_SESSION['role'] = $user['role'];
+            //  Store user data in the Session
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['full_name'];
+            $_SESSION['role'] = $user['role'];
 
-                //  التوجيه التلقائي حسب الصلاحية لصفحة الأدمن أو الصفحة الرئيسية
-                //  Redirect based on user role (Admin or Patient)
-                if ($user['role'] == 'admin') {
-                    header("Location: admin/index.php"); 
-                } else {
-                    header("Location: index.php"); 
-                }
-                exit(); 
+            //  Redirect based on user role (Admin or Patient)
+            if ($user['role'] == 'admin') {
+                header("Location: admin/index.php");
             } else {
-                //  رسالة خطأ بالإنجليزية إذا كانت البيانات غير صحيحة
-                //  English error message for incorrect credentials
-                $message = "<div class='alert alert-danger'> Incorrect email or password. Please try again!</div>";
+                header("Location: index.php");
             }
+            exit();
+        } else {
+            //  English error message for incorrect credentials
+            $message = "<div class='alert alert-danger'> Incorrect email or password. Please try again!</div>";
         }
-        
+    }
 }
 
 // استدعاء الهيدر

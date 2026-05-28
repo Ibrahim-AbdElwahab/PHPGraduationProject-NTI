@@ -1,5 +1,4 @@
 <?php
-// 1. لازم Session_start عشان نعرف نقرأ بيانات اليوزر اللي عمل لوجن
 session_start();
 
 require 'includes/dbConnection.php';

@@ -1,43 +1,35 @@
 <?php
-// ==========================================
-// START: Session & Access Control Block
-// ==========================================
+// START Session & Access Control Block
 session_start();
 
-// بالعربي: حماية الصفحة من أي دخول غير مصرح به
-// English: Secure the page from unauthorized access
+//  Secure the page from unauthorized access
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit();
 }
-// ==========================================
-// END: Session & Access Control Block
-// ==========================================
+// Session & Access Control Block
 
 require '../includes/dbConnection.php';
 global $connection;
 
 $message = '';
 
-// بالعربي: معالجة البيانات المرسلة عند الضغط على زر الحفظ
-// English: Process form submission when clicking save button
+//Process form submission when clicking save button
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // بالعربي: تنظيف مخرجات الفورم لحماية الداتا بيز من الـ SQL Injection
-    // English: Sanitize form data inputs to prevent SQL Injection vulnerabilities
+
+    //Sanitize form data inputs to prevent SQL Injection vulnerabilities
     $doctor_name      = mysqli_real_escape_string($connection, trim($_POST['doctor_name']));
     $specialty        = mysqli_real_escape_string($connection, trim($_POST['specialty']));
     $consultation_fee = mysqli_real_escape_string($connection, trim($_POST['consultation_fee']));
     
-    // صورة افتراضية للطبيب الجديد لعدم كسر تصميم الكروت في الإندكس الرئيسي
     $image_url        = 'https://cdn-icons-png.flaticon.com/512/3774/3774299.png'; 
 
-    // بالعربي: التحقق من الحقول المطلوبة (Validation) والرسائل بالإنجليزية تماماً كما طلبت
-    // English: Data fields validation check with strict English messages
+    //Data fields validation check with strict English messages
     if (empty($doctor_name) || empty($specialty) || empty($consultation_fee)) {
         $message = "<div class='alert alert-danger'>⚠️ All fields are mandatory! Please fill them up.</div>";
     } else {
-        // بالعربي: إدخال البيانات في جدول doctors
-        // English: Perform database insert query into doctors table
+        
+        // Perform database insert query into doctors table
         $query = "INSERT INTO `doctors` (doctor_name, specialty, consultation_fee, image_url) 
                   VALUES ('$doctor_name', '$specialty', '$consultation_fee', '$image_url')";
 
